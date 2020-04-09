@@ -16,22 +16,19 @@ let currentActiveCard = 0;
 const cardsEl = [];
 
 // Store card data
-// const cardsData = getCardsData();
+const cardsData = getCardsData();
 
-const cardsData = [
-  {
-    question: 'What must a variable begin with?',
-    answer: 'A letter, $ or _'
-  },
-  {
-    question: 'What is a variable?',
-    answer: 'Container for a piece of data'
-  },
-  {
-    question: 'Example of Case Sensitive Variable',
-    answer: 'thisIsAVariable'
-  }
-];
+function getCardsData() {
+    const cards = JSON.parse(localStorage.getItem('cards'));
+    return cards === null ? [] : cards;
+}
+
+// Add card to local storage
+function setCardsData(cards) {
+    localStorage.setItem('cards', JSON.stringify(cards));
+    //reload the page to get the new data in local storage
+    window.location.reload();
+}
 
 // Create all cards
 function createCards() {
@@ -104,3 +101,35 @@ prevBtn.addEventListener('click', () => {
   
     updateCurrentText();
 });
+
+showBtn.addEventListener('click', () => addContainer.classList.add('show'));
+
+hideBtn.addEventListener('click', () => addContainer.classList.remove('show'));
+
+// Add new card
+addCardBtn.addEventListener('click', () => {
+    const question = questionEl.value;
+    const answer = answerEl.value;
+  
+    if (question.trim() && answer.trim()) {
+      const newCard = { question, answer };
+  
+      createCard(newCard);
+  
+      questionEl.value = '';
+      answerEl.value = '';
+  
+      addContainer.classList.remove('show');
+  
+      cardsData.push(newCard);
+      setCardsData(cardsData);
+    }
+});
+
+// Clear cards 
+clearBtn.addEventListener('click', () => {
+    localStorage.clear();
+    cardsContainer.innerHTML = '';
+    window.location.reload();
+})
+  
